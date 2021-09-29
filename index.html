@@ -10,9 +10,9 @@
 	<meta name="copyright" content="&copy; 2020 Steve Seguin" />
 	
 	<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
-	<link rel="icon" type="image/png" sizes="32x32" href="https://obs.ninja/images/favicon-32x32.png" />
-	<link rel="icon" type="image/png" sizes="16x16" href="https://obs.ninja/images/favicon-16x16.png" />
-	<link rel="icon" href="https://obs.ninja/images/favicon.ico" />
+	<link rel="icon" type="image/png" sizes="32x32" href="https://vdo.ninja/media/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="https://vdo.ninja/media/favicon-16x16.png" />
+	<link rel="icon" href="https://vdo.ninja/media/favicon.ico" />
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 	
@@ -52,7 +52,11 @@ function process(){
 		input = input.replace('http://obs.ninja/', '');
 	} else if (input.startsWith("obs.ninja/")){
 		input = input.replace('obs.ninja/', '');
-	}
+	} else if (input.startsWith("https://vdo.ninja/")){
+		input = input.replace('https://vdo.ninja/', 'vdo.ninja/');
+	} else if (input.startsWith("http://vdo.ninja/")){
+		input = input.replace('http://vdo.ninja/', 'vdo.ninja/');
+	} 
 	
 	input = input.replace('&view=', '&v=');
 	input = input.replace('&view&', '&v&');
@@ -61,9 +65,28 @@ function process(){
 	
 	input = input.replace('&videobitrate=', '&vb=');
 	input = input.replace('?videobitrate=', '?vb=');
-	
 	input = input.replace('&bitrate=', '&vb=');
 	input = input.replace('?bitrate=', '?vb=');
+	
+	input = input.replace('?audiodevice=', '?ad=');
+	input = input.replace('&audiodevice=', '&ad=');
+	
+	input = input.replace('?label=', '?l=');
+	input = input.replace('&label=', '&l=');
+	
+	input = input.replace('?stereo=', '?s=');
+	input = input.replace('&stereo=', '&s=');
+	input = input.replace('&stereo&', '&s&');
+	input = input.replace('?stereo&', '?s&');
+	
+	input = input.replace('?webcam&', '?wc&');
+	input = input.replace('&webcam&', '&wc&');
+	
+	input = input.replace('?remote=', '?rm=');
+	input = input.replace('&remote=', '&rm=');
+	
+	input = input.replace('?password=', '?p=');
+	input = input.replace('&password=', '&p=');
 	
 	input = input.replace('&maxvideobitrate=', '&mvb=');
 	input = input.replace('?maxvideobitrate=', '?mvb=');
@@ -115,26 +138,40 @@ function process(){
 
 if (window.location.pathname.length>20){
 	
-	
-	console.log(window.location.pathname.split(/\/(.+)/)[1]);
-	console.log(window.location.pathname.length);
 	var decrypted = CryptoJS.AES.decrypt(window.location.pathname.split(/\/(.+)/)[1], key);
-	console.log(decrypted.toString(CryptoJS.enc.Utf8));
 	
 	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 	
-	if (decrypted.startsWith("https://")){
-		// not obs.ninja link
-	} else if (decrypted.startsWith("http://")){
-		// not obs.ninja link
+	if (decrypted.startsWith("http://")){
+		// generic link
+	} else if (decrypted.startsWith("https://")){
+		// generic link
+	} else if (decrypted.startsWith("obs.ninja/")){
+		decrypted = "https://"+decrypted;
+		if (decrypted.includes("?")){
+			decrypted+="&noheader";
+		} else {
+			decrypted+="?noheader";
+		}
+	} else if (decrypted.startsWith("vdo.ninja/")){
+		decrypted = "https://"+decrypted;
+		if (decrypted.includes("?")){
+			decrypted+="&noheader";
+		} else {
+			decrypted+="?noheader";
+		}
 	} else {
 		decrypted = "https://obs.ninja/"+decrypted;
+		if (decrypted.includes("?")){
+			decrypted+="&noheader";
+		} else {
+			decrypted+="?noheader";
+		}
 	}
-	
 	
 	var iframe = document.createElement("iframe");
 	iframe.src = decrypted;
-	iframe.allow="autoplay;camera;microphone";
+	iframe.allow="autoplay;camera;microphone;fullscreen;picture-in-picture;display-capture;"; 
 	document.getElementById("body").appendChild(iframe);
 	
 	
@@ -145,17 +182,17 @@ if (window.location.pathname.length>20){
 	document.getElementById("body").appendChild(container);
 
 	var title = document.createElement("h3");
-	title.innerHTML = "URL Obfuscator for OBS.Ninja<br />";
+	title.innerHTML = "URL Obfuscator for VDO.Ninja<br />";
 	container.appendChild(title);
 
 	var input = document.createElement("input");
-	input.placeholder = "Paste the OBS.Ninja invite URL here";
+	input.placeholder = "Paste the VDO.Ninja invite URL here";
 	input.id = "urlInpput";
 	input.style.padding = "10px";
 	input.style.width = "500px";
 	input.style.maxWidth = "90%";
-	input.title = "Put an OBS.Ninja invite link here";
-	input.alt = "Put an OBS.Ninja invite link here";
+	input.title = "Put an VDO.Ninja invite link here";
+	input.alt = "Put an VDO.Ninja invite link here";
 	container.appendChild(input);
 	
 	var button = document.createElement("button");
@@ -170,6 +207,12 @@ if (window.location.pathname.length>20){
 	var div = document.createElement("div");
 	div.id = "urloutput";
 	div.style.margin = "20px";
+	container.appendChild(div);
+	
+	var div = document.createElement("a");
+	div.style.margin = "20px";
+	div.href= "https://invite.vdo.ninja";
+	div.innerHTML = "or create a new Invite Link here"
 	container.appendChild(div);
 }
 
