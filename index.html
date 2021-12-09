@@ -37,13 +37,24 @@
 			width:100%;
 			height:100%;
 		}
+		.popup-message {
+			align-text: center;
+			position: absolute;
+			z-index: 35 !important;
+			padding: 3px !important;
+			min-width: 180px !important;
+			background-color: #fff !important;
+			border: solid 1px #dfdfdf !important;
+			box-shadow: 1px 1px 2px #cfcfcf !important;
+			color:black;
+		}
 	</style>
 </head>
 <body id="body">
 <script>
 var key  = "OBSNINJAFORLIFE";
 
-function process(){
+function process(event=false){
 	var input   = document.getElementById("urlInpput").value;
 	
 	if (input.startsWith("https://obs.ninja/")){
@@ -130,6 +141,8 @@ function process(){
 	document.getElementById("urloutput").innerHTML = "<a href='https://invite.cam/"+ encrypted.toString()+"'>https://invite.cam/"+encrypted.toString()+"</a>";
 	copyFunction("https://invite.cam/"+encrypted.toString());
 	
+	popupMessage(event);
+	
 	console.log(encrypted.toString());
 	var decrypted = CryptoJS.AES.decrypt(encrypted.toString(), key);
 	console.log(decrypted);
@@ -199,7 +212,7 @@ if (window.location.pathname.length>20){
 	button.innerHTML = "Obfuscate!";
 	button.style.padding = "10px";
 	button.style.margin = "0 0 0 5px";
-	button.addEventListener("click", function(){ process(); });
+	button.addEventListener("click", process);
 	button.title = "Encode and Copy the result";
 	button.alt = "Encode and Copy the result";
 	container.appendChild(button);
@@ -225,6 +238,65 @@ function copyFunction(copyText) {
 		document.execCommand('copy');
 		document.body.removeChild(dummy);
 	
+}
+
+function popupMessage(e, message = "Copied to Clipboard") { // right click menu
+
+	var posx = 0;
+	var posy = 0;
+
+	if (!e) var e = window.event;
+
+	if (e.pageX || e.pageY) {
+		posx = e.pageX;
+		posy = e.pageY;
+	} else if (e.clientX || e.clientY) {
+		posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+		posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+	}
+
+	posx += 10;
+
+
+	
+	var menu = document.createElement("div");
+	
+	menu.className = "popup-message";
+	menu.innerHTML = "<center>" + message + "</center>";
+	var menuState = 0;
+	var menuWidth;
+	var menuHeight;
+	var menuPosition;
+	var menuPositionX;
+	var menuPositionY;
+
+	var windowWidth;
+	var windowHeight;
+
+	
+	menuWidth = menu.offsetWidth + 4;
+	menuHeight = menu.offsetHeight + 4;
+
+	windowWidth = window.innerWidth;
+	windowHeight = window.innerHeight;
+
+	if ((windowWidth - posx) < menuWidth) {
+		menu.style.left = windowWidth - menuWidth + "px";
+	} else {
+		menu.style.left = posx + "px";
+	}
+
+	if ((windowHeight - posy) < menuHeight) {
+		menu.style.top = windowHeight - menuHeight + "px";
+	} else {
+		menu.style.top = posy + "px";
+	}
+	
+	document.body.appendChild(menu);
+
+	setTimeout(function(menuE) {
+		menuE.remove();
+	}, 1000, menu);
 }
 
 </script>
