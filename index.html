@@ -55,14 +55,14 @@
 var key  = "OBSNINJAFORLIFE";
 
 function process(event=false){
-	var input   = document.getElementById("urlInpput").value;
+	var input = document.getElementById("urlInpput").value;
 	
 	if (input.startsWith("https://obs.ninja/")){
-		input = input.replace('https://obs.ninja/', '');
+		input = input.replace('https://vdo.ninja/', '');
 	} else if (input.startsWith("http://obs.ninja/")){
-		input = input.replace('http://obs.ninja/', '');
+		input = input.replace('http://vdo.ninja/', '');
 	} else if (input.startsWith("obs.ninja/")){
-		input = input.replace('obs.ninja/', '');
+		input = input.replace('vdo.ninja/', '');
 	} else if (input.startsWith("https://vdo.ninja/")){
 		input = input.replace('https://vdo.ninja/', 'vdo.ninja/');
 	} else if (input.startsWith("http://vdo.ninja/")){
@@ -154,6 +154,8 @@ if (window.location.pathname.length>20){
 	var decrypted = CryptoJS.AES.decrypt(window.location.pathname.split(/\/(.+)/)[1], key);
 	
 	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
+
+	decrypted = decrypted.replace("obs.ninja","vdo.ninja");
 	
 	if (decrypted.startsWith("http://")){
 		// generic link
@@ -174,7 +176,7 @@ if (window.location.pathname.length>20){
 			decrypted+="?noheader";
 		}
 	} else {
-		decrypted = "https://obs.ninja/"+decrypted;
+		decrypted = "https://vdo.ninja/"+decrypted;
 		if (decrypted.includes("?")){
 			decrypted+="&noheader";
 		} else {
