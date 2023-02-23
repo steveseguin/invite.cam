@@ -19,7 +19,7 @@
 	<style>
 		body{
 			margin: 0;
-			paddng: 0;
+			padding: 0;
 			background-color:#343840;
 			color: #DDD;;
 			font-family: sans-serif, Arial, Helvetica;
@@ -135,60 +135,98 @@ function process(event=false){
 	input = input.replace('&room=', '&r=');
 	input = input.replace('?room=', '?r=');
 	
-	console.log(input);
-	
 	var encrypted = CryptoJS.AES.encrypt(input, key);
 	document.getElementById("urloutput").innerHTML = "<a href='https://invite.cam/"+ encrypted.toString()+"'>https://invite.cam/"+encrypted.toString()+"</a>";
 	copyFunction("https://invite.cam/"+encrypted.toString());
 	
 	popupMessage(event);
 	
-	console.log(encrypted.toString());
 	var decrypted = CryptoJS.AES.decrypt(encrypted.toString(), key);
-	console.log(decrypted);
-	console.log(decrypted.toString(CryptoJS.enc.Utf8));
 }
-
+var confirm1 = false;
 if (window.location.pathname.length>20){
 	
 	var decrypted = CryptoJS.AES.decrypt(window.location.pathname.split(/\/(.+)/)[1], key);
 	
 	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
-
 	decrypted = decrypted.replace("obs.ninja","vdo.ninja");
 	
-	if (decrypted.startsWith("http://")){
-		// generic link
-	} else if (decrypted.startsWith("https://")){
-		// generic link
-	} else if (decrypted.startsWith("obs.ninja/")){
-		decrypted = "https://"+decrypted;
-		if (decrypted.includes("?")){
-			decrypted+="&noheader";
-		} else {
-			decrypted+="?noheader";
-		}
-	} else if (decrypted.startsWith("vdo.ninja/")){
-		decrypted = "https://"+decrypted;
-		if (decrypted.includes("?")){
-			decrypted+="&noheader";
-		} else {
-			decrypted+="?noheader";
-		}
-	} else {
-		decrypted = "https://vdo.ninja/"+decrypted;
-		if (decrypted.includes("?")){
-			decrypted+="&noheader";
-		} else {
-			decrypted+="?noheader";
-		}
+	if (!decrypted){
+		decrypted = "https://vdo.ninja/";
 	}
 	
-	var iframe = document.createElement("iframe");
-	iframe.src = decrypted;
-	iframe.allow="autoplay;camera;microphone;fullscreen;picture-in-picture;display-capture;"; 
-	document.getElementById("body").appendChild(iframe);
+	if (decrypted.includes("perfectwatch")){
+		document.write("The person who sent you this link is trying to trick you into a phishing attack. It has been blocked.");
+		decrypted = false;
+	} else if (decrypted.startsWith("http://75.59.233.87/") || 
+				decrypted.startsWith("http://75.59.233.87:") ||
+				decrypted.startsWith("https://75.59.233.87:") ||
+				decrypted.startsWith("https://75.59.233.87/")){
+		// skip
+	} else if (!(decrypted.includes("?") || decrypted.includes("&") || decrypted.includes("vdo.ninja") || !decrypted.startsWith("http"))){
+		confirm1 = confirm("Click OK to continue only if you trust the person who sent you this link.");
+		if (!confirm1){
+			decrypted = false;
+		}
+	} 
 	
+	if (decrypted){
+		if (decrypted.startsWith("http://")){
+			// generic link
+		} else if (decrypted.startsWith("https://")){
+			// generic link
+		} else if (decrypted.startsWith("obs.ninja/")){
+			decrypted = "https://"+decrypted;
+			if (decrypted.includes("?")){
+				decrypted+="&noheader";
+			} else {
+				decrypted+="?noheader";
+			}
+		} else if (decrypted.startsWith("vdo.ninja/")){
+			decrypted = "https://"+decrypted;
+			if (decrypted.includes("?")){
+				decrypted+="&noheader";
+			} else {
+				decrypted+="?noheader";
+			}
+		} else {
+			decrypted = "https://vdo.ninja/"+decrypted;
+			if (decrypted.includes("?")){
+				decrypted+="&noheader";
+			} else {
+				decrypted+="?noheader";
+			}
+		}
+		
+		if (!(decrypted.startsWith("https://vdo.ninja/") || 
+			decrypted.startsWith("https://vdo.ninja?") || 
+			decrypted.startsWith("https://versus.cam/") || 
+			decrypted.startsWith("http://75.59.233.87/") || 
+			decrypted.startsWith("https://75.59.233.87/") ||
+			decrypted.startsWith("http://75.59.233.87:") || 
+			decrypted.startsWith("https://75.59.233.87:") || 
+			decrypted.startsWith("https://backup.vdo.ninja/")  || 
+			decrypted.startsWith("https://socialstream.ninja/")  || 
+			decrypted.startsWith("https://rtc.ninja/"))){
+			if (!confirm1){
+				confirm1 = confirm("Click OK to continue only if you trust the person who sent you this link.");
+				if (!confirm1){
+					decrypted = false;
+				}
+			}
+		}
+		
+		if (decrypted){
+			var iframe = document.createElement("iframe");
+			if (decrypted.startsWith("https://vdo.ninja/alpha/")){
+				iframe.src = "https://vdo.ninja/alpha/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
+			} else {
+				iframe.src = decrypted;
+			}
+			iframe.allow="autoplay;camera;microphone;midi;encrypted-media;geolocation;fullscreen;picture-in-picture;display-capture;"; 
+			document.getElementById("body").appendChild(iframe);
+		}
+	}
 	
 } else {
 
@@ -227,7 +265,12 @@ if (window.location.pathname.length>20){
 	var div = document.createElement("a");
 	div.style.margin = "20px";
 	div.href= "https://invite.vdo.ninja";
-	div.innerHTML = "or create a new Invite Link here"
+	div.innerHTML = "or create a new Invite Link here";
+	container.appendChild(div);
+	
+	var div = document.createElement("h5");
+	div.style.margin = "20px";
+	div.innerHTML = "<br /><br />Notice: Due to abuse of this service by someone with a lack of morals, I may warn users if a non-VDO.Ninja domain is loaded.<br />Contact me if you would like me to whitelist a trust-worthy domain. <i>steve@seguin.email</i>"
 	container.appendChild(div);
 }
 
@@ -259,8 +302,6 @@ function popupMessage(e, message = "Copied to Clipboard") { // right click menu
 
 	posx += 10;
 
-
-	
 	var menu = document.createElement("div");
 	
 	menu.className = "popup-message";
