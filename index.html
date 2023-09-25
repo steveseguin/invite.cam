@@ -10,9 +10,9 @@
 	<meta name="copyright" content="&copy; 2020 Steve Seguin" />
 	
 	<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
-	<link rel="icon" type="image/png" sizes="32x32" href="https://vdo.ninja/media/favicon-32x32.png" />
-	<link rel="icon" type="image/png" sizes="16x16" href="https://vdo.ninja/media/favicon-16x16.png" />
-	<link rel="icon" href="https://vdo.ninja/media/favicon.ico" />
+	<link id="favicon1" rel="icon" type="image/png" sizes="32x32" href="https://vdo.ninja/media/favicon-32x32.png" />
+	<link id="favicon2"  rel="icon" type="image/png" sizes="16x16" href="https://vdo.ninja/media/favicon-16x16.png" />
+	<link id="favicon3" rel="icon" href="https://vdo.ninja/media/favicon.ico" />
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 	
@@ -158,19 +158,22 @@ if (window.location.pathname.length>20){
 	if (decrypted.includes("perfectwatch")){
 		document.write("The person who sent you this link is trying to trick you into a phishing attack. It has been blocked.");
 		decrypted = false;
+	} else if (decrypted.includes("kiteracy")){ // To the person exploiting this domain, WHY ?????  You've just got my domain blacklist - it's a free community site that's just trying to do some good in this world, but you're destroying it. 
+			// if you find an exploit, please report it to me instead. I'll be grateful.
+		document.write("The person who sent you this link is trying to trick you into a phishing attack. It has been blocked.");
+		decrypted = false;
 	} else if (decrypted.startsWith("http://75.59.233.87/") || 
 				decrypted.startsWith("http://75.59.233.87:") ||
 				decrypted.startsWith("https://75.59.233.87:") ||
 				decrypted.startsWith("https://75.59.233.87/")){
 		// skip
 	} else if (!(decrypted.includes("?") || decrypted.includes("&") || decrypted.includes("vdo.ninja") || !decrypted.startsWith("http"))){
-		confirm1 = confirm("Click OK to continue only if you trust the person who sent you this link.");
-		if (!confirm1){
-			decrypted = false;
-		}
+		decrypted = false;
+		document.write("This link is not approved to be accessed. Please contact the site's administrator if this is a new issue.");
 	} 
 	
 	if (decrypted){
+	
 		if (decrypted.startsWith("http://")){
 			// generic link
 		} else if (decrypted.startsWith("https://")){
@@ -205,18 +208,15 @@ if (window.location.pathname.length>20){
 			decrypted.startsWith("https://75.59.233.87/") ||
 			decrypted.startsWith("http://75.59.233.87:") || 
 			decrypted.startsWith("https://75.59.233.87:") || 
-			decrypted.startsWith("https://backup.vdo.ninja/")  || 
-			decrypted.startsWith("https://socialstream.ninja/")  || 
+			decrypted.startsWith("https://backup.vdo.ninja/") || 
+			decrypted.startsWith("https://player.clevercast.com/") || 
+			decrypted.startsWith("https://socialstream.ninja/") || 
+			decrypted.startsWith("https://comms.cam/") || 
 			decrypted.startsWith("https://rtc.ninja/"))){
-			if (!confirm1){
-				confirm1 = confirm("Click OK to continue only if you trust the person who sent you this link.");
-				if (!confirm1){
-					decrypted = false;
-				}
-			}
-		}
+			document.write("This link is not approved to be accessed. Please contact the site's administrator is this is a new issue.");
+			decrypted = false;
+		} else if (decrypted){
 		
-		if (decrypted){
 			var iframe = document.createElement("iframe");
 			if (decrypted.startsWith("https://vdo.ninja/alpha/?")){
 				iframe.src = "https://vdo.ninja/alpha/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
@@ -229,9 +229,44 @@ if (window.location.pathname.length>20){
 			}
 			iframe.allow="autoplay;camera;microphone;midi;encrypted-media;geolocation;fullscreen;picture-in-picture;display-capture;"; 
 			document.getElementById("body").appendChild(iframe);
+			try {
+				if (decrypted.split("?").length>1){
+					decrypted = decrypted.split("?");
+					decrypted.shift();
+					decrypted =  "?" + decrypted.join("?");
+					
+				} else if (decrypted.split("/&").length>1){
+					decrypted = decrypted.split("/&");
+					decrypted.shift();
+					decrypted = "?" + decrypted.join("/&");
+				}
+				if (decrypted){
+					var urlEdited = decrypted.replace(/\?\?/g, "?");
+					urlEdited = urlEdited.replace(/\?/g, "&");
+					urlEdited = urlEdited.replace(/\&/, "?");
+					var urlParams = new URLSearchParams(urlEdited);
+					if (urlParams.has('headertitle')){
+						let pageTitle = urlParams.get('headertitle') || "";
+						pageTitle = decodeURIComponent(pageTitle) || "";
+						document.title = pageTitle
+					}
+					if (urlParams.has('favicon')){
+						let favicon = "";
+						if (urlParams.get('favicon')){
+							favicon = decodeURIComponent(urlParams.get('favicon')) || "";
+						}
+						document.getElementById("favicon1").href = favicon;
+						document.getElementById("favicon2").href = favicon;
+						document.getElementById("favicon3").href = favicon;
+					}
+				}
+				
+			} catch(e){
+				console.error(e);	
+			}
+			decrypted="";
 		}
 	}
-	
 } else {
 
 	var container = document.createElement("div");
@@ -274,7 +309,7 @@ if (window.location.pathname.length>20){
 	
 	var div = document.createElement("h5");
 	div.style.margin = "20px";
-	div.innerHTML = "<br /><br />Notice: Due to abuse, I may warn users if a non-VDO.Ninja domain is loaded.<br />Contact me if you would like a trusted site whitelisted. <i>steve@seguin.email</i>"
+	div.innerHTML = "<br /><br />Notice: Due to abuse, only VDO.Ninja and white-listed domains are allowed now.<br />Contact me here to report abuse: <i>steve@seguin.email</i>"
 	container.appendChild(div);
 }
 
