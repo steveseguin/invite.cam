@@ -1,5 +1,6 @@
 name: Github Action javascript-obfuscator
 uses: KevinRohn/github-action-javascript-obfuscator@v1.1.0
+on: [push]
 with:
   input_path: main.js
   output_path: obfuscated.js
