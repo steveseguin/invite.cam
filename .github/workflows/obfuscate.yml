@@ -10,8 +10,8 @@ jobs:
       - name: Obfuscate JavaScript
         uses: KevinRohn/github-action-javascript-obfuscator@v1.1.0
         with:
-          input_path: /main.js
-          output_path: /
+          input_path: main.js
+          output_path: obfuscated.js
           compact: true
           control_flow_flattening: false
           dead_code_injection: false
@@ -27,3 +27,14 @@ jobs:
           string_array_threshold: 0.75
           unicode_escape_sequence: false
           target: node
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add obfuscated.js
+          git commit -m "Add obfuscated JavaScript file" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
