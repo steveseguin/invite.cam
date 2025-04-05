@@ -162,20 +162,25 @@ if (window.location.pathname.length>20){
 			document.write("This link is not approved to be accessed. Please contact the site's administrator is this is a new issue.");
 			decrypted = false;
 		} else if (decrypted){
-		
-			var iframe = document.createElement("iframe");
-			if (decrypted.startsWith("https://vdo.ninja/alpha/?")){
-				iframe.src = "https://vdo.ninja/alpha/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
-			} else if (decrypted.startsWith("https://vdo.ninja/beta/?")){
-				iframe.src = "https://vdo.ninja/beta/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
-			} else if (decrypted.startsWith("https://vdo.ninja/?")){
-				iframe.src = "https://vdo.ninja/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
-			} else {
-				iframe.src = decrypted;
-			}
-			iframe.allow="autoplay;camera;microphone;midi;encrypted-media;geolocation;fullscreen;picture-in-picture;display-capture;"; 
-			document.getElementById("body").appendChild(iframe);
-			try {
+			    var iframe = document.createElement("iframe");
+			    if (decrypted.startsWith("https://vdo.ninja/alpha/?")){
+			        iframe.src = "https://vdo.ninja/alpha/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
+			    } else if (decrypted.startsWith("https://vdo.ninja/beta/?")){
+			        iframe.src = "https://vdo.ninja/beta/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
+			    } else if (decrypted.startsWith("https://vdo.ninja/?")){
+			        iframe.src = "https://vdo.ninja/?i="+encodeURIComponent(location.pathname.split(/\/(.+)/)[1]);
+			    } else {
+			        iframe.src = decrypted;
+			    }
+			    
+			    iframe.allow = "document-domain;encrypted-media;sync-xhr;usb;web-share;cross-origin-isolated;midi *;geolocation;camera *;microphone *;fullscreen;picture-in-picture;display-capture;accelerometer;autoplay;gyroscope;screen-wake-lock;";
+			    iframe.setAttribute("allowtransparency", "true");
+			    iframe.setAttribute("crossorigin", "anonymous");
+			    iframe.setAttribute("credentialless", "true");
+			    
+			    document.getElementById("body").appendChild(iframe);
+			    
+			    try {
 				if (decrypted.split("?").length>1){
 					decrypted = decrypted.split("?");
 					decrypted.shift();
