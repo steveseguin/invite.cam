@@ -63,8 +63,8 @@ function process(event=false){
 	input = input.replace('&cleanoutput=', '&clean=');
 	input = input.replace('?cleanoutput=', '?clean=');
 	
-	input = input.replace('&maxviewers=', '&clean=');
-	input = input.replace('?maxviewers=', '?clean=');
+	input = input.replace('&maxviewers=', '&mv=');
+	input = input.replace('?maxviewers=', '?mv=');
 	
 	input = input.replace('&framerate=', '&fr=');
 	input = input.replace('?framerate=', '?fr=');
